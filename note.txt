@@ -1,0 +1,9 @@
+1.install prisma 
+yarn add prisma --dev
+2.set up (https://www.prisma.io/blog/nestjs-prisma-rest-api-7D056s1BmOL0#set-up-prisma)
+npx prisma init
+3.Migrate the database
+yarn prisma migrate dev --name products
+4.Tạo module prisma vs service prisma
+npx nest generate service prisma
+npx nest generate module prisma
