@@ -7,3 +7,12 @@ yarn prisma migrate dev --name products
 4.Tạo module prisma vs service prisma
 npx nest generate service prisma
 npx nest generate module prisma
+5.Sau khi thêm or sửa schema chúng ta 
+npx prisma migrate dev: update database schema theo schema nhưng sẽ lost data nếu có thay đổi schema thì sẽ tạo migration mới
+npx prisma db pull: update schema theo database schema
+gõ prisma để xem cli 
+
+~~~~~~~~~~~~~~~~~~~~~~
+2.set up config environment
+https://docs.nestjs.com/techniques/configuration#configuration
+yarn add @nestjs/config
