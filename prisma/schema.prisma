@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Role {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(uuid())
   name      String
   Account   Account[]
   createdAt DateTime  @default(now())
@@ -19,19 +19,19 @@ model Role {
 }
 
 model Account {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   username  String
   password  String
   phone     String
   role      Role     @relation(fields: [roleId], references: [id])
-  roleId    Int
+  roleId    String
   Order     Order[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Category {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(uuid())
   name      String
   Product   Product[]
   createdAt DateTime  @default(now())
@@ -39,33 +39,33 @@ model Category {
 }
 
 model Image {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   url       String
   Product   Product  @relation(fields: [productId], references: [id])
-  productId Int
+  productId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Product {
-  id           Int            @id @default(autoincrement())
+  id           String         @id @default(uuid())
   name         String
   price        Int
   description  String
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   category     Category       @relation(fields: [categoryId], references: [id])
-  categoryId   Int
+  categoryId   String
   Image        Image[]
   OrderProduct OrderProduct[]
 }
 
 model Order {
-  id           Int            @id @default(autoincrement())
+  id           String         @id @default(uuid())
   status       String
   dateOrder    DateTime
   Account      Account        @relation(fields: [accountId], references: [id])
-  accountId    Int
+  accountId    String
   Anonymous    String
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
@@ -74,9 +74,9 @@ model Order {
 
 model OrderProduct {
   product   Product @relation(fields: [productId], references: [id])
-  productId Int
+  productId String
   order     Order   @relation(fields: [orderId], references: [id])
-  orderId   Int
+  orderId   String
 
   @@id([productId, orderId])
 }

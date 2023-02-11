@@ -16,3 +16,6 @@ gõ prisma để xem cli
 2.set up config environment
 https://docs.nestjs.com/techniques/configuration#configuration
 yarn add @nestjs/config
+
+3.set up authentication vs authorization
+yarn add  --save @nestjs/passport passport passport-local
