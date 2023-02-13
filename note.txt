@@ -19,3 +19,6 @@ yarn add @nestjs/config
 
 3.set up authentication vs authorization
 yarn add  --save @nestjs/passport passport passport-local
+4.cookie-parser
+yarn add cookie-parser
+yarn add -D @types/cookie-parser

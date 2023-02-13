@@ -4,11 +4,13 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 import { DecodeToken } from './dto/token';
+import { JwtConfigService } from 'src/config/jwt/config.service';
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UsersService,
     private jwtService: JwtService,
+    private jwtConfigService: JwtConfigService,
   ) {}
 
   async validateUser(
@@ -28,14 +30,22 @@ export class AuthService {
     return null;
   }
 
-  async login(loginDto: LoginDto): Promise<{ access_token: string }> {
+  async login(loginDto: LoginDto): Promise<string> {
     const { username, password } = loginDto;
     const result = await this.validateUser(username, password);
     if (!result)
       throw new HttpException('account wrong password', HttpStatus.BAD_REQUEST);
-    const payload = { username: result.username, id: result.id };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    const cookie = this.createCookieWithToken(result.username, result.id);
+    return cookie;
+  }
+
+  createCookieWithToken(username: string, id: string): string {
+    const payload = { username: username, id: id };
+    const token = this.jwtService.sign(payload);
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.jwtConfigService.expires}`;
+  }
+
+  getCookieForLogOut(): string {
+    return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
   }
 }

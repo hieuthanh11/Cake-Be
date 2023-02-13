@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { Product } from '@prisma/client';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma, Product } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateProduct } from './dto/create-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -13,10 +12,38 @@ export class ProductsService {
     });
   }
 
-  async create(createProduct: CreateProduct): Promise<Product> {
-    const { description, name, price, categoryId } = createProduct;
+  async create(data: Prisma.ProductCreateInput): Promise<Product> {
+    const category = await this.prisma.category.findFirst({
+      where: { id: data.category.connect.id },
+    });
+    if (!category) {
+      throw new NotFoundException(
+        `Category with ${data.category.connect.id} does not exist.`,
+      );
+    }
     return await this.prisma.product.create({
-      data: { name, price, categoryId, description },
+      data: data,
+    });
+  }
+
+  async getProductById(id: string): Promise<Product> {
+    return await this.prisma.product.findUnique({ where: { id } });
+  }
+
+  async updateProduct(params: {
+    where: Prisma.ProductWhereUniqueInput;
+    data: Prisma.ProductUpdateInput;
+  }): Promise<Product> {
+    const { data, where } = params;
+    return this.prisma.product.update({
+      data,
+      where,
+    });
+  }
+
+  async deletePost(where: Prisma.ProductWhereUniqueInput): Promise<Product> {
+    return this.prisma.product.delete({
+      where,
     });
   }
 }
