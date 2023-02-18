@@ -5,10 +5,13 @@ import { AppModule } from './app.module';
 import { AppConfigService } from './config/app/config.service';
 import * as cookieParser from 'cookie-parser';
 import { PrismaClientExceptionFilter } from './prisma-client-exception/prisma-client-exception.filter';
+import helmet from 'helmet';
+import * as compression from 'compression';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  app.use(helmet());
+  app.use(compression());
   const configService = app.get(AppConfigService);
 
   app.useGlobalPipes(new ValidationPipe({ forbidUnknownValues: false })); // apply pipe validation

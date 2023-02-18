@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -19,6 +20,9 @@ import { CreateProduct } from './dto/create-product.dto';
 import { ProductsService } from './products.service';
 import { ProductEntity } from './dto/product.dto';
 import { UpdateProduct } from './dto/update-product.dto';
+import { ParamProduct, QueryProductDto } from './dto/query-product.dto';
+import { SortEnum } from 'src/base/base.filter';
+
 @ApiBearerAuth()
 @Controller('products')
 @ApiTags('products')
@@ -27,8 +31,27 @@ export class ProductsController {
 
   @Get()
   @ApiOkResponse({ type: ProductEntity, isArray: true })
-  async getProducts(): Promise<Product[]> {
-    return this.productService.getAll();
+  async getProducts(
+    @Query() query: QueryProductDto,
+  ): Promise<Partial<Product>[]> {
+    const { page, sort, take, cursor, category, name } = query;
+    let params: ParamProduct = {
+      skip: take * (page - 1),
+      orderBy: { name: sort === SortEnum.ASCENDING ? 'asc' : 'desc' },
+      take: take,
+      where: {
+        name: {
+          contains: name,
+        },
+      },
+    };
+    if (cursor) {
+      params = { ...params, cursor: { id: cursor } };
+    }
+    if (category) {
+      params = { ...params, where: { ...params.where, categoryId: category } };
+    }
+    return this.productService.getAll(params);
   }
 
   @Get(':id')

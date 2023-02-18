@@ -3,6 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Account } from '@prisma/client';
 import { Response } from 'express';
 import { Public } from 'src/decorators/public.decorator';
+import { excludeUser } from 'src/utils/utils';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 
@@ -25,8 +26,8 @@ export class AuthController {
   }
 
   @Get('profile')
-  profile(@Request() request): Account {
-    return request.user;
+  profile(@Request() request): Omit<Account, 'password'> {
+    return excludeUser(request['user'], ['password']);
   }
 
   @Post('log-out')

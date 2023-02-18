@@ -6,9 +6,33 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
-  async getAll(): Promise<Product[]> {
+  async getAll(params: {
+    skip?: number;
+    take?: number;
+    cursor?: Prisma.ProductWhereUniqueInput;
+    where?: Prisma.ProductWhereInput;
+    orderBy?: Prisma.ProductOrderByWithRelationInput;
+  }): Promise<Partial<Product>[]> {
+    const { skip, take, cursor, where, orderBy } = params;
     return this.prisma.product.findMany({
-      include: { category: true },
+      skip,
+      take,
+      cursor,
+      where,
+      orderBy,
+      select: {
+        name: true,
+        price: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
   }
 

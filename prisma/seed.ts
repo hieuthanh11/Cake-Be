@@ -45,7 +45,7 @@ async function main() {
   const categories = await prisma.category.findMany();
 
   const productsPromise: Promise<Product>[] = [];
-  for (let index = 0; index < 5; index++) {
+  for (let index = 0; index < 100; index++) {
     const radomIndexCategory = Math.floor(Math.random() * categories.length);
     productsPromise.push(
       prisma.product.create({
