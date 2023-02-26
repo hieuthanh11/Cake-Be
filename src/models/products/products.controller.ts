@@ -22,6 +22,7 @@ import { ProductEntity } from './dto/product.dto';
 import { UpdateProduct } from './dto/update-product.dto';
 import { ParamProduct, QueryProductDto } from './dto/query-product.dto';
 import { SortEnum } from 'src/base/base.filter';
+import { PageDto } from 'src/base/page.dto';
 
 @ApiBearerAuth()
 @Controller('products')
@@ -33,10 +34,11 @@ export class ProductsController {
   @ApiOkResponse({ type: ProductEntity, isArray: true })
   async getProducts(
     @Query() query: QueryProductDto,
-  ): Promise<Partial<Product>[]> {
-    const { page, sort, take, cursor, category, name } = query;
+  ): Promise<PageDto<Partial<Product>>> {
+    const { sort, take, cursor, category, name, page } = query;
+
     let params: ParamProduct = {
-      skip: take * (page - 1),
+      skip: (page - 1) * take,
       orderBy: { name: sort === SortEnum.ASCENDING ? 'asc' : 'desc' },
       take: take,
       where: {
@@ -51,7 +53,7 @@ export class ProductsController {
     if (category) {
       params = { ...params, where: { ...params.where, categoryId: category } };
     }
-    return this.productService.getAll(params);
+    return this.productService.getAll(params, query);
   }
 
   @Get(':id')
@@ -67,8 +69,9 @@ export class ProductsController {
   @Post()
   @ApiCreatedResponse({ type: ProductEntity })
   async createProduct(@Body() createProduct: CreateProduct): Promise<Product> {
-    const { description, name, price, categoryId } = createProduct;
+    const { description, name, price, categoryId, quantity } = createProduct;
     return this.productService.create({
+      quantity,
       name: name,
       description: description,
       price: price,

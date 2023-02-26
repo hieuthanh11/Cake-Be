@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
-import { BaseFilter } from 'src/base/base.filter';
+import { PageOptionsDto } from 'src/base/base.filter';
 
-export class QueryProductDto extends BaseFilter {
+export class QueryProductDto extends PageOptionsDto {
   @ApiProperty({ type: String, description: 'Name product', required: false })
   name: string;
 

@@ -56,6 +56,7 @@ model Product {
   updatedAt    DateTime       @updatedAt
   category     Category       @relation(fields: [categoryId], references: [id])
   categoryId   String
+  quantity     Int
   Image        Image[]
   OrderProduct OrderProduct[]
 }
@@ -64,9 +65,9 @@ model Order {
   id           String         @id @default(uuid())
   status       String
   dateOrder    DateTime
-  Account      Account        @relation(fields: [accountId], references: [id])
+  Account      Account?       @relation(fields: [accountId], references: [id])
   accountId    String
-  Anonymous    String
+  anonymous    String
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   OrderProduct OrderProduct[]
@@ -77,6 +78,7 @@ model OrderProduct {
   productId String
   order     Order   @relation(fields: [orderId], references: [id])
   orderId   String
+  quantity  Int
 
   @@id([productId, orderId])
 }

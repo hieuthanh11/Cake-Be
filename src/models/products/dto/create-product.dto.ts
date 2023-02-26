@@ -13,4 +13,7 @@ export class CreateProduct {
   @ApiProperty()
   @IsNotEmpty()
   categoryId: string;
+  @ApiProperty({ default: 10 })
+  @IsNotEmpty()
+  quantity: number;
 }

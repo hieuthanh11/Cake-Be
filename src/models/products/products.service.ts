@@ -1,25 +1,26 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, Product } from '@prisma/client';
+import { PageDto } from 'src/base/page.dto';
+import { PageMetaDto } from 'src/base/page.meta.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ParamProduct, QueryProductDto } from './dto/query-product.dto';
 
 @Injectable()
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
-  async getAll(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.ProductWhereUniqueInput;
-    where?: Prisma.ProductWhereInput;
-    orderBy?: Prisma.ProductOrderByWithRelationInput;
-  }): Promise<Partial<Product>[]> {
+  async getAll(
+    params: ParamProduct,
+    query: QueryProductDto,
+  ): Promise<PageDto<Partial<Product>>> {
     const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.product.findMany({
+    const entities = this.prisma.product.findMany({
       skip,
       take,
       cursor,
       where,
       orderBy,
+      // ...params,
       select: {
         name: true,
         price: true,
@@ -34,6 +35,10 @@ export class ProductsService {
         },
       },
     });
+    const count = this.prisma.product.count({ where: params.where });
+    const [data, itemCount] = await Promise.all([entities, count]);
+    const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto: query });
+    return new PageDto(data, pageMetaDto);
   }
 
   async create(data: Prisma.ProductCreateInput): Promise<Product> {

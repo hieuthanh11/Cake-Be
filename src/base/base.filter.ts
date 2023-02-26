@@ -6,7 +6,7 @@ export enum SortEnum {
   DESCENDING = 'DESCENDING',
 }
 
-export class BaseFilter {
+export class PageOptionsDto {
   @Type(() => Number)
   @ApiProperty({
     type: Number,
@@ -31,8 +31,17 @@ export class BaseFilter {
     required: false,
     default: SortEnum.ASCENDING,
   })
-  sort: SortEnum;
+  sort: SortEnum = SortEnum.ASCENDING;
 
   @ApiProperty({ type: String, description: 'cursor id ', required: false })
   cursor: string;
+
+  get skip(): number {
+    return (this.page - 1) * this.take;
+  }
+}
+
+export interface PageMetaDtoParameters {
+  pageOptionsDto: PageOptionsDto;
+  itemCount: number;
 }

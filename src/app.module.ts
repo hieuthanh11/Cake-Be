@@ -10,6 +10,7 @@ import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { RolesModule } from './models/roles/roles.module';
 import { CategoriesModule } from './models/categories/categories.module';
 import { RolesGuard } from './guard/roles.guard';
+import { OrderModule } from './models/order/order.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { RolesGuard } from './guard/roles.guard';
     AuthModule,
     RolesModule,
     CategoriesModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [

@@ -50,6 +50,7 @@ async function main() {
     productsPromise.push(
       prisma.product.create({
         data: {
+          quantity: 100,
           name: faker.commerce.productName(),
           description: faker.commerce.productDescription(),
           price: 2000,
