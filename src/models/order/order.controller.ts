@@ -11,6 +11,8 @@ import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { User } from 'src/decorators/user.decorator';
+import { AccountEntity } from '../accounts/dto/account.dto';
 
 @ApiTags('orders')
 @Controller('orders')
@@ -18,8 +20,8 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.create(createOrderDto);
+  create(@Body() createOrderDto: CreateOrderDto, @User() user: AccountEntity) {
+    return this.orderService.create(createOrderDto, user);
   }
 
   @Get()

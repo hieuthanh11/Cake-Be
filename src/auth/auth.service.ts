@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { UsersService } from 'src/models/users/users.service';
+import { AccountsService } from 'src/models/accounts/accounts.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
@@ -8,7 +8,7 @@ import { JwtConfigService } from 'src/config/jwt/config.service';
 @Injectable()
 export class AuthService {
   constructor(
-    private userService: UsersService,
+    private userService: AccountsService,
     private jwtService: JwtService,
     private jwtConfigService: JwtConfigService,
   ) {}

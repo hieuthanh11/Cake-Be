@@ -1,19 +1,61 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { OrderEnum } from 'src/enum/order.enum';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { AccountEntity } from '../accounts/dto/account.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Injectable()
 export class OrderService {
   constructor(private prisma: PrismaService) {}
-  create(createOrderDto: CreateOrderDto) {
-    const { anonymous, products } = createOrderDto;
+  create(createOrderDto: CreateOrderDto, user: AccountEntity) {
+    const { products, dateOrder } = createOrderDto;
 
-    return 'This action adds a new order';
+    return this.prisma.$transaction(async (tx) => {
+      const order = await tx.order.create({
+        data: {
+          status: OrderEnum.Pending,
+          Account: { connect: { id: user.id } },
+          dateOrder: dateOrder,
+        },
+      });
+      for (const { id, quantity } of products) {
+        const product = await tx.product.findFirstOrThrow({
+          where: { id: id },
+        });
+
+        if (product.quantity < quantity) {
+          throw new BadRequestException(
+            `${product.name} not enough quantity sold ` + quantity,
+          );
+        }
+
+        await Promise.all([
+          tx.orderProduct.create({
+            data: {
+              quantity,
+              order: { connect: { id: order.id } },
+              product: { connect: { id: product.id } },
+            },
+          }),
+          tx.product.update({
+            where: {
+              id: product.id,
+            },
+            data: {
+              quantity: product.quantity - quantity,
+            },
+          }),
+        ]);
+      }
+      return 'Create order successfully';
+    });
   }
 
   findAll() {
-    return `This action returns all order`;
+    return this.prisma.order.findMany({
+      include: { OrderProduct: { include: { product: true } }, Account: true },
+    });
   }
 
   findOne(id: number) {

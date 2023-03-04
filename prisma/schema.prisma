@@ -67,7 +67,7 @@ model Order {
   dateOrder    DateTime
   Account      Account?       @relation(fields: [accountId], references: [id])
   accountId    String
-  anonymous    String
+  anonymous    String?
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   OrderProduct OrderProduct[]

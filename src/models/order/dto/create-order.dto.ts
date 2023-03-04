@@ -10,6 +10,8 @@ export class CreateOrderDto {
   @ApiProperty({ type: [ProductOrder] })
   products: ProductOrder[];
 
-  @ApiProperty({ type: String })
-  anonymous: string;
+  @ApiProperty({ type: String, default: new Date() })
+  dateOrder: string;
+  // @ApiProperty({ type: String })
+  // anonymous: string;
 }

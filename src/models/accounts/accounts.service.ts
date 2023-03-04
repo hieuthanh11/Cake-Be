@@ -3,7 +3,7 @@ import { Account } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class UsersService {
+export class AccountsService {
   constructor(private prisma: PrismaService) {}
 
   async findUserName(username: string): Promise<Account> {
