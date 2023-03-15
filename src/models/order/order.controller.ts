@@ -8,11 +8,15 @@ import {
   Delete,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { CreateOrderDto } from './dto/create-order.dto';
+import {
+  CreateOrderDto,
+  CreateOrderDtoAnonymous,
+} from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { User } from 'src/decorators/user.decorator';
 import { AccountEntity } from '../accounts/dto/account.dto';
+import { Public } from 'src/decorators/public.decorator';
 
 @ApiTags('orders')
 @Controller('orders')
@@ -22,6 +26,12 @@ export class OrderController {
   @Post()
   create(@Body() createOrderDto: CreateOrderDto, @User() user: AccountEntity) {
     return this.orderService.create(createOrderDto, user);
+  }
+
+  @Public()
+  @Post('/anonymous')
+  createAnonymous(@Body() createOrderDto: CreateOrderDtoAnonymous) {
+    return this.orderService.createAnonymous(createOrderDto);
   }
 
   @Get()

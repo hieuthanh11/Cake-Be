@@ -66,7 +66,7 @@ model Order {
   status       String
   dateOrder    DateTime
   Account      Account?       @relation(fields: [accountId], references: [id])
-  accountId    String
+  accountId    String?        
   anonymous    String?
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
